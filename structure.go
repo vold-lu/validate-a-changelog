@@ -1,18 +1,18 @@
-package validate_a_changelog
+package validateachangelog
 
 import "time"
 
 type Changelog struct {
-	Versions []Version
+	Versions []Version `json:"versions"`
 }
 
 type Version struct {
-	Version     string
-	ReleaseDate time.Time
+	Version     string    `json:"version"`
+	ReleaseDate time.Time `json:"release_date"`
 
-	Entries map[string][]Entry
+	Entries map[string][]Entry `json:"entries"`
 }
 
 type Entry struct {
-	Description string
+	Description string `json:"description"`
 }

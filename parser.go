@@ -1,4 +1,4 @@
-package validate_a_changelog
+package validateachangelog
 
 import (
 	"bufio"
