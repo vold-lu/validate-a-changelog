@@ -33,7 +33,7 @@ func Validate(c *Changelog, opts *Options) error {
 		}
 
 		if !opts.AllowInvalidChangeType {
-			for changeType, _ := range version.Entries {
+			for changeType := range version.Entries {
 				if _, exists := standardChangeTypes[changeType]; !exists {
 					return fmt.Errorf("invalid change type (%s) in Changelog entry %s", changeType, version.Version)
 				}
