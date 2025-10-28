@@ -54,8 +54,9 @@ func main() {
 			var sb strings.Builder
 
 			// Handle version line
-			sb.WriteString("## ")
+			sb.WriteString("## [")
 			sb.WriteString(v.Version)
+			sb.WriteString("]")
 
 			if v.ReleaseDate != nil {
 				sb.WriteString(" ")

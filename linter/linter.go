@@ -28,6 +28,8 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 	}
 	currentSection := ""
 
+	standardChangeTypes := internal.GetStandardChangeTypes()
+
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -47,6 +49,7 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 					ReleaseDate: &time.Time{},
 					Entries:     map[string][]validateachangelog.Entry{},
 				}
+				currentSection = ""
 			}
 
 			var version string
@@ -73,7 +76,7 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 					}
 
 				} else if unreleasedVersionRegex.MatchString(line) || len(c.Versions) == 0 {
-					version = "[Unreleased]"
+					version = "Unreleased"
 				}
 			}
 
@@ -84,11 +87,26 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 
 			currentVersion.Version = version
 			currentVersion.ReleaseDate = releaseDate
-		}
+		} else if internal.IsSectionLine(line) {
+			// Parse section (Added, Changed, Removed, Fixed)
 
-		// Parse section (Added, Changed, Removed, Fixed)
-		if internal.IsSectionLine(line) {
 			currentSection = internal.ParseSectionLine(line)
+
+			// Hardcoded mapping
+			// TODO: How can we improve/extended this?
+			if _, exists := standardChangeTypes[currentSection]; !exists {
+				switch strings.ToLower(currentSection) {
+				case "fix":
+					currentSection = "Fixed"
+					break
+				case "change":
+					currentSection = "Changed"
+					break
+				case "new":
+					currentSection = "Added"
+					break
+				}
+			}
 
 			if currentVersion.Version == "" {
 				return nil, fmt.Errorf("invalid changelog section: %s (no version found)", line)
@@ -97,11 +115,13 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 			if _, exists := currentVersion.Entries[currentSection]; exists {
 				currentVersion.Entries[currentSection] = []validateachangelog.Entry{}
 			}
-		}
-
-		// Parse entry
-		if internal.IsEntryLine(line) {
+		} else if internal.IsEntryLine(line) {
+			// Parse entry
 			entry := internal.ParseEntryLine(line)
+
+			if !strings.HasSuffix(entry, ".") {
+				entry = fmt.Sprintf("%s.", entry)
+			}
 
 			if currentSection == "" {
 				return nil, fmt.Errorf("invalid changelog entry: %s (no section found)", line)
@@ -109,6 +129,22 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 
 			currentVersion.Entries[currentSection] = append(currentVersion.Entries[currentSection], validateachangelog.Entry{
 				Description: entry,
+			})
+		} else if strings.Trim(line, " ") != "" {
+			if !strings.HasSuffix(line, ".") {
+				line = fmt.Sprintf("%s.", line)
+			}
+
+			if currentSection == "" {
+				currentSection = "Added"
+			}
+
+			if _, exists := currentVersion.Entries[currentSection]; exists {
+				currentVersion.Entries[currentSection] = []validateachangelog.Entry{}
+			}
+
+			currentVersion.Entries[currentSection] = append(currentVersion.Entries[currentSection], validateachangelog.Entry{
+				Description: line,
 			})
 		}
 	}
