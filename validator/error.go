@@ -3,7 +3,7 @@ package validator
 import "strings"
 
 type ValidationError struct {
-	Issues []ValidationIssue
+	Issues []ValidationIssue `json:"issues"`
 }
 
 func (v *ValidationError) Error() string {
@@ -30,11 +30,11 @@ func (v *ValidationError) hasIssues() bool {
 
 type ValidationIssue struct {
 	// Version contains the version where the error happens (when possible)
-	Version string
+	Version string `json:"version"`
 	// Section contains the section where the error happens (when possible)
-	Section string
+	Section string `json:"section"`
 	// Error is the human formatted error message
-	Error string
+	Error string `json:"error"`
 }
 
 func (vi *ValidationIssue) String() string {

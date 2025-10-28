@@ -485,3 +485,9 @@ Sample output for the test changelog in keep a changelog website:
   ]
 }
 ```
+
+## cmd/validate-changelog
+
+```
+Usage: validate-changelog [-allow-empty-version] [-allow-invalid-change-type] [-allow-missing-release-date] <file>
+```

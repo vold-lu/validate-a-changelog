@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 
 	validateachangelog "github.com/vold-lu/validate-a-changelog/parser"
@@ -20,7 +19,6 @@ func main() {
 
 	if len(os.Args) > 2 {
 		version = os.Args[2]
-		log.Println(version)
 	}
 
 	c, err := validateachangelog.ParseFile(changelogFile)
