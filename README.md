@@ -491,3 +491,9 @@ Sample output for the test changelog in keep a changelog website:
 ```
 Usage: validate-changelog [-allow-empty-version] [-allow-invalid-change-type] [-allow-missing-release-date] [-json] <file>
 ```
+
+## cmd/lint-changelog
+
+```
+Usage: lint-changelog [-json] <file>
+```

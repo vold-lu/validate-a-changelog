@@ -71,3 +71,14 @@ func ParseEntryLine(line string) string {
 
 	return matches[1]
 }
+
+func GetStandardChangeTypes() map[string]int {
+	return map[string]int{
+		"Added":      0,
+		"Changed":    1,
+		"Deprecated": 2,
+		"Removed":    3,
+		"Fixed":      4,
+		"Security":   5,
+	}
+}

@@ -4,6 +4,7 @@ import (
 	"regexp"
 
 	"github.com/vold-lu/validate-a-changelog"
+	"github.com/vold-lu/validate-a-changelog/internal"
 	"golang.org/x/mod/semver"
 )
 
@@ -37,7 +38,7 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 		return err
 	}
 
-	standardChangeTypes := getStandardChangeTypes()
+	standardChangeTypes := internal.GetStandardChangeTypes()
 	previousVersion := ""
 
 	for _, version := range c.Versions {
@@ -118,16 +119,5 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 		return err
 	} else {
 		return nil
-	}
-}
-
-func getStandardChangeTypes() map[string]int {
-	return map[string]int{
-		"Added":      0,
-		"Changed":    1,
-		"Deprecated": 2,
-		"Removed":    3,
-		"Fixed":      4,
-		"Security":   5,
 	}
 }
