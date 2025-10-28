@@ -133,7 +133,7 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 				Description: entry,
 			})
 			_ = currentVersion.Entries.Set(currentSection, currentVersionEntries)
-		} else if strings.Trim(line, " ") != "" {
+		} else if strings.Trim(line, " ") != "" && !internal.IsTitleLine(line) {
 			if !strings.HasSuffix(line, ".") {
 				line = fmt.Sprintf("%s.", line)
 			}
