@@ -24,7 +24,7 @@ func Validate(c *Changelog, opts *Options) error {
 	standardChangeTypes := getStandardChangeTypes()
 
 	for _, version := range c.Versions {
-		if version.ReleaseDate.IsZero() && !opts.AllowMissingReleaseDate {
+		if version.ReleaseDate == nil && !opts.AllowMissingReleaseDate {
 			return fmt.Errorf("missing release date in Changelog entry %s", version.Version)
 		}
 

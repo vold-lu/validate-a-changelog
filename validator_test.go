@@ -18,7 +18,7 @@ func TestValidateChangelogMissingReleaseDateAndAllowed(t *testing.T) {
 		Versions: []Version{
 			{
 				Version:     "1.0.0",
-				ReleaseDate: time.Time{},
+				ReleaseDate: nil,
 				Entries:     map[string][]Entry{},
 			},
 		},
@@ -38,7 +38,7 @@ func TestValidateChangelogMissingReleaseDateAndNotAllowed(t *testing.T) {
 		Versions: []Version{
 			{
 				Version:     "1.0.0",
-				ReleaseDate: time.Time{},
+				ReleaseDate: nil,
 				Entries:     map[string][]Entry{},
 			},
 		},
@@ -54,11 +54,13 @@ func TestValidateChangelogMissingReleaseDateAndNotAllowed(t *testing.T) {
 }
 
 func TestValidateChangelogNonMissingReleaseDateAndNotAllowed(t *testing.T) {
+	releaseDate := time.Date(2023, 10, 10, 0, 0, 0, 0, time.UTC)
+
 	c := &Changelog{
 		Versions: []Version{
 			{
 				Version:     "1.0.0",
-				ReleaseDate: time.Date(2023, 10, 10, 0, 0, 0, 0, time.UTC),
+				ReleaseDate: &releaseDate,
 				Entries:     map[string][]Entry{},
 			},
 		},
@@ -78,7 +80,7 @@ func TestValidateChangelogEmptyVersionAndAllowed(t *testing.T) {
 		Versions: []Version{
 			{
 				Version:     "1.0.0",
-				ReleaseDate: time.Time{},
+				ReleaseDate: nil,
 				Entries:     map[string][]Entry{},
 			},
 		},
@@ -98,7 +100,7 @@ func TestValidateChangelogEmptyVersionAndNotAllowed(t *testing.T) {
 		Versions: []Version{
 			{
 				Version:     "1.0.0",
-				ReleaseDate: time.Time{},
+				ReleaseDate: nil,
 				Entries:     map[string][]Entry{},
 			},
 		},
@@ -118,7 +120,7 @@ func TestValidateChangelogNonEmptyVersionAndNotAllowed(t *testing.T) {
 		Versions: []Version{
 			{
 				Version:     "1.0.0",
-				ReleaseDate: time.Time{},
+				ReleaseDate: nil,
 				Entries: map[string][]Entry{
 					"Added": {
 						{Description: "Test description"},
@@ -142,7 +144,7 @@ func TestValidateChangelogInvalidChangeTypeAndAllowed(t *testing.T) {
 		Versions: []Version{
 			{
 				Version:     "1.0.0",
-				ReleaseDate: time.Time{},
+				ReleaseDate: nil,
 				Entries: map[string][]Entry{
 					"InvalidType": {
 						{Description: "Test description"},
@@ -166,7 +168,7 @@ func TestValidateChangelogInvalidChangeTypeAndNotAllowed(t *testing.T) {
 		Versions: []Version{
 			{
 				Version:     "1.0.0",
-				ReleaseDate: time.Time{},
+				ReleaseDate: nil,
 				Entries: map[string][]Entry{
 					"InvalidType": {
 						{Description: "Test description"},
@@ -190,7 +192,7 @@ func TestValidateChangelogValidChangeTypeAndNotAllowed(t *testing.T) {
 		Versions: []Version{
 			{
 				Version:     "1.0.0",
-				ReleaseDate: time.Time{},
+				ReleaseDate: nil,
 				Entries: map[string][]Entry{
 					"Added": {
 						{Description: "Test description"},

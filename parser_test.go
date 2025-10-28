@@ -61,7 +61,7 @@ func TestParseValidChangelog(t *testing.T) {
 	}
 
 	// Validate date parsing of version 1.1.1
-	if c.Versions[1].ReleaseDate != time.Date(2023, 03, 05, 0, 0, 0, 0, time.UTC) {
+	if c.Versions[1].ReleaseDate == nil || *c.Versions[1].ReleaseDate != time.Date(2023, 03, 05, 0, 0, 0, 0, time.UTC) {
 		t.Logf("Expected 2023-03-05 release date in c.Versions[1].ReleaseDate. Got: %s", c.Versions[1].ReleaseDate)
 		t.Fail()
 	}

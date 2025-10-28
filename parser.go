@@ -18,7 +18,7 @@ func Parse(r io.Reader) (*Changelog, error) {
 
 	currentVersion := Version{
 		Version:     "",
-		ReleaseDate: time.Time{},
+		ReleaseDate: &time.Time{},
 		Entries:     map[string][]Entry{},
 	}
 	currentSection := ""
@@ -34,7 +34,7 @@ func Parse(r io.Reader) (*Changelog, error) {
 				c.Versions = append(c.Versions, currentVersion)
 				currentVersion = Version{
 					Version:     "",
-					ReleaseDate: time.Time{},
+					ReleaseDate: &time.Time{},
 					Entries:     map[string][]Entry{},
 				}
 			}
@@ -100,16 +100,16 @@ func ParseFile(filename string) (*Changelog, error) {
 	return Parse(f)
 }
 
-func parseVersionLine(line string) (string, time.Time, error) {
+func parseVersionLine(line string) (string, *time.Time, error) {
 	// Handle unreleased
 	if unreleasedVersionRegex.MatchString(line) {
-		return "Unreleased", time.Time{}, nil
+		return "Unreleased", nil, nil
 	}
 
 	parts := versionRegex.FindStringSubmatch(line)
 
 	version := ""
-	releaseDate := time.Time{}
+	var releaseDate *time.Time
 
 	// Parse the version
 	if len(parts) > 1 {
@@ -120,7 +120,7 @@ func parseVersionLine(line string) (string, time.Time, error) {
 	if len(parts) > 2 {
 		t, err := time.Parse("2006-01-02", parts[2])
 		if err == nil {
-			releaseDate = t
+			releaseDate = &t
 		}
 	}
 

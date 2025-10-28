@@ -7,8 +7,8 @@ type Changelog struct {
 }
 
 type Version struct {
-	Version     string    `json:"version"`
-	ReleaseDate time.Time `json:"release_date"`
+	Version     string     `json:"version"`
+	ReleaseDate *time.Time `json:"release_date"`
 
 	Entries map[string][]Entry `json:"entries"`
 }
