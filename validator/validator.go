@@ -12,9 +12,10 @@ const unreleasedVersion = "Unreleased"
 var semverRegex = regexp.MustCompile(`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
 
 type Options struct {
-	AllowEmptyVersion       bool
-	AllowMissingReleaseDate bool
-	AllowInvalidChangeType  bool
+	AllowEmptyVersion           bool
+	AllowMissingReleaseDate     bool
+	AllowInvalidChangeType      bool
+	AllowInvalidChangeTypeOrder bool
 }
 
 func Validate(c *validateachangelog.Changelog, opts *Options) error {
@@ -80,6 +81,36 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 			}
 		}
 
+		// Validate that the change type is in the good order
+		if !opts.AllowInvalidChangeTypeOrder {
+			previousChangeType := ""
+
+			for changeType := range version.Entries {
+				if previousChangeType != "" {
+
+					var previousChangeTypeWeight int
+					if val, ok := standardChangeTypes[previousChangeType]; ok {
+						previousChangeTypeWeight = val
+					} else {
+						previousChangeTypeWeight = 999
+					}
+
+					var currentChangeTypeWeight int
+					if val, ok := standardChangeTypes[changeType]; ok {
+						currentChangeTypeWeight = val
+					} else {
+						currentChangeTypeWeight = 999
+					}
+
+					if previousChangeTypeWeight > currentChangeTypeWeight {
+						err.pushIssue(version.Version, changeType, "unsorted change type in changelog entry")
+					}
+				}
+
+				previousChangeType = changeType
+			}
+		}
+
 		previousVersion = version.Version
 	}
 
@@ -90,13 +121,13 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 	}
 }
 
-func getStandardChangeTypes() map[string]interface{} {
-	return map[string]interface{}{
-		"Added":      nil,
-		"Changed":    nil,
-		"Deprecated": nil,
-		"Removed":    nil,
-		"Fixed":      nil,
-		"Security":   nil,
+func getStandardChangeTypes() map[string]int {
+	return map[string]int{
+		"Added":      0,
+		"Changed":    1,
+		"Deprecated": 2,
+		"Removed":    3,
+		"Fixed":      4,
+		"Security":   5,
 	}
 }

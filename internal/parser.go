@@ -5,10 +5,6 @@ import (
 	"time"
 )
 
-const (
-	entryPrefix = "- "
-)
-
 var (
 	versionRegex           = regexp.MustCompile(`^## \[([0-9.]+)\] ?-? ?([0-9]{4}-[0-9]{2}-[0-9]{2})?$`)
 	unreleasedVersionRegex = regexp.MustCompile(`^## \[Unreleased\]$`)
