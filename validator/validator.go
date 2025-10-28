@@ -45,7 +45,7 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 		if !opts.AllowInvalidChangeType {
 			for changeType := range version.Entries {
 				if _, exists := standardChangeTypes[changeType]; !exists {
-					err.pushIssue(version.Version, changeType, "no change type in changelog entry")
+					err.pushIssue(version.Version, changeType, "invalid change type in changelog entry")
 				}
 			}
 		}

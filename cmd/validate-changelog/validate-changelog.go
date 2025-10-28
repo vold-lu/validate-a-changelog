@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -14,6 +15,7 @@ func main() {
 	allowEmptyVersion := flag.Bool("allow-empty-version", false, "allow version without entries")
 	allowMissingReleaseDate := flag.Bool("allow-missing-release-date", false, "allow version without release date")
 	allowInvalidChangeType := flag.Bool("allow-invalid-change-type", false, "allow section with invalid change type")
+	jsonOutput := flag.Bool("json", false, "output validation issues as json")
 
 	flag.Parse()
 
@@ -38,7 +40,14 @@ func main() {
 	}
 
 	if err := validator.Validate(c, opts); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		if *jsonOutput {
+			if err := json.NewEncoder(os.Stdout).Encode(err.(*validator.ValidationError)); err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+		} else {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	}
 }
