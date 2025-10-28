@@ -252,3 +252,23 @@ func TestValidateChangelogValidChangeTypeAndNotAllowed(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestValidateChangelogInvalidVersion(t *testing.T) {
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
+			{
+				Version:     "Test",
+				ReleaseDate: nil,
+				Entries:     map[string][]validateachangelog.Entry{},
+			},
+		},
+	}
+
+	if err := Validate(c, &Options{
+		AllowMissingReleaseDate: true,
+		AllowEmptyVersion:       true,
+		AllowInvalidChangeType:  true,
+	}); err == nil {
+		t.Fail()
+	}
+}

@@ -1,10 +1,14 @@
 package validator
 
 import (
+	"regexp"
+
 	"github.com/vold-lu/validate-a-changelog"
 )
 
 const unreleasedVersion = "Unreleased"
+
+var semverRegex = regexp.MustCompile(`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
 
 type Options struct {
 	AllowEmptyVersion       bool
@@ -34,6 +38,11 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 	standardChangeTypes := getStandardChangeTypes()
 
 	for _, version := range c.Versions {
+		// Make sure version is valid
+		if version.Version != unreleasedVersion && !semverRegex.MatchString(version.Version) {
+			err.pushIssue(version.Version, "", "invalid version")
+		}
+
 		if version.ReleaseDate == nil && !opts.AllowMissingReleaseDate && version.Version != unreleasedVersion {
 			err.pushIssue(version.Version, "", "missing release date in changelog entry")
 		}

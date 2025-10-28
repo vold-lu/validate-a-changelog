@@ -12,8 +12,10 @@ import (
 	"github.com/vold-lu/validate-a-changelog"
 )
 
-var versionRegex = regexp.MustCompile(`^## \[([0-9.]+)\] - ([0-9]{4}-[0-9]{2}-[0-9]{2})$`)
-var unreleasedVersionRegex = regexp.MustCompile(`^## \[Unreleased\]$`)
+var (
+	versionRegex           = regexp.MustCompile(`^## \[([0-9.]+)\] - ([0-9]{4}-[0-9]{2}-[0-9]{2})$`)
+	unreleasedVersionRegex = regexp.MustCompile(`^## \[Unreleased\]$`)
+)
 
 func Parse(r io.Reader) (*validateachangelog.Changelog, error) {
 	c := &validateachangelog.Changelog{}
