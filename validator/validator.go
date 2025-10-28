@@ -1,8 +1,6 @@
 package validator
 
 import (
-	"fmt"
-
 	"github.com/vold-lu/validate-a-changelog"
 )
 
@@ -17,35 +15,45 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 		opts = &Options{}
 	}
 
+	err := &ValidationError{}
+
 	if c == nil {
-		return fmt.Errorf("nil Changelog")
+		err.pushIssue("", "", "nil changelog")
+
+		return err
 	}
 
 	if len(c.Versions) == 0 {
-		return fmt.Errorf("no versions found in Changelog")
+		err.pushIssue("", "", "no versions found in the changelog")
+
+		return err
 	}
 
 	standardChangeTypes := getStandardChangeTypes()
 
 	for _, version := range c.Versions {
 		if version.ReleaseDate == nil && !opts.AllowMissingReleaseDate {
-			return fmt.Errorf("missing release date in Changelog entry %s", version.Version)
+			err.pushIssue(version.Version, "", "missing release date in changelog entry")
 		}
 
 		if len(version.Entries) == 0 && !opts.AllowEmptyVersion {
-			return fmt.Errorf("no entries found in Changelog entry %s", version.Version)
+			err.pushIssue(version.Version, "", "no sections found in changelog entry")
 		}
 
 		if !opts.AllowInvalidChangeType {
 			for changeType := range version.Entries {
 				if _, exists := standardChangeTypes[changeType]; !exists {
-					return fmt.Errorf("invalid change type (%s) in Changelog entry %s", changeType, version.Version)
+					err.pushIssue(version.Version, changeType, "no change type in changelog entry")
 				}
 			}
 		}
 	}
 
-	return nil
+	if err.hasIssues() {
+		return err
+	} else {
+		return nil
+	}
 }
 
 func getStandardChangeTypes() map[string]interface{} {
