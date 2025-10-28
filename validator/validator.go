@@ -4,6 +4,8 @@ import (
 	"github.com/vold-lu/validate-a-changelog"
 )
 
+const unreleasedVersion = "Unreleased"
+
 type Options struct {
 	AllowEmptyVersion       bool
 	AllowMissingReleaseDate bool
@@ -32,7 +34,7 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 	standardChangeTypes := getStandardChangeTypes()
 
 	for _, version := range c.Versions {
-		if version.ReleaseDate == nil && !opts.AllowMissingReleaseDate {
+		if version.ReleaseDate == nil && !opts.AllowMissingReleaseDate && version.Version != unreleasedVersion {
 			err.pushIssue(version.Version, "", "missing release date in changelog entry")
 		}
 

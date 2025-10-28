@@ -15,7 +15,7 @@ func TestValidateEmptyChangelog(t *testing.T) {
 	}
 }
 
-func TestValidateChangelogMissingReleaseDateAndAllowed(t *testing.T) {
+func TestValidateChangelogMissingReleaseDateAndNotAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
 		Versions: []validateachangelog.Version{
 			{
@@ -35,7 +35,27 @@ func TestValidateChangelogMissingReleaseDateAndAllowed(t *testing.T) {
 	}
 }
 
-func TestValidateChangelogMissingReleaseDateAndNotAllowed(t *testing.T) {
+func TestValidateChangelogMissingReleaseDateUnreleasedVersionAndNotAllowed(t *testing.T) {
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
+			{
+				Version:     "Unreleased",
+				ReleaseDate: nil,
+				Entries:     map[string][]validateachangelog.Entry{},
+			},
+		},
+	}
+
+	if err := Validate(c, &Options{
+		AllowMissingReleaseDate: false,
+		AllowEmptyVersion:       true,
+		AllowInvalidChangeType:  true,
+	}); err != nil {
+		t.Fail()
+	}
+}
+
+func TestValidateChangelogMissingReleaseDateAndAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
 		Versions: []validateachangelog.Version{
 			{
