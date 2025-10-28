@@ -38,7 +38,7 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 			err.pushIssue(version.Version, "", "missing release date in changelog entry")
 		}
 
-		if len(version.Entries) == 0 && !opts.AllowEmptyVersion {
+		if len(version.Entries) == 0 && !opts.AllowEmptyVersion && version.Version != unreleasedVersion {
 			err.pushIssue(version.Version, "", "no sections found in changelog entry")
 		}
 
