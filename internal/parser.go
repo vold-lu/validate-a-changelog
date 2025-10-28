@@ -1,0 +1,77 @@
+package internal
+
+import (
+	"regexp"
+	"time"
+)
+
+const (
+	entryPrefix = "- "
+)
+
+var (
+	versionRegex           = regexp.MustCompile(`^## \[([0-9.]+)\] ?-? ?([0-9]{4}-[0-9]{2}-[0-9]{2})?$`)
+	unreleasedVersionRegex = regexp.MustCompile(`^## \[Unreleased\]$`)
+
+	sectionRegex = regexp.MustCompile(`^### (.*)$`)
+	entryRegex   = regexp.MustCompile(`^- (.*)$`)
+)
+
+func IsVersionLine(line string) bool {
+	return versionRegex.MatchString(line) || unreleasedVersionRegex.MatchString(line)
+}
+
+func ParseVersionLine(line string) (string, *time.Time, error) {
+	// Handle unreleased
+	if unreleasedVersionRegex.MatchString(line) {
+		return "Unreleased", nil, nil
+	}
+
+	parts := versionRegex.FindStringSubmatch(line)
+
+	version := ""
+	var releaseDate *time.Time
+
+	// Parse the version
+	if len(parts) > 1 {
+		version = parts[1]
+	}
+
+	// Parse the release date (if any)
+	if len(parts) > 2 && parts[2] != "" {
+		t, err := time.Parse("2006-01-02", parts[2])
+		if err != nil {
+			return "", nil, err
+		}
+
+		releaseDate = &t
+	}
+
+	return version, releaseDate, nil
+}
+
+func IsSectionLine(line string) bool {
+	return sectionRegex.MatchString(line)
+}
+
+func ParseSectionLine(line string) string {
+	matches := sectionRegex.FindStringSubmatch(line)
+	if len(matches) == 0 {
+		return ""
+	}
+
+	return matches[1]
+}
+
+func IsEntryLine(line string) bool {
+	return entryRegex.MatchString(line)
+}
+
+func ParseEntryLine(line string) string {
+	matches := entryRegex.FindStringSubmatch(line)
+	if len(matches) == 0 {
+		return ""
+	}
+
+	return matches[1]
+}

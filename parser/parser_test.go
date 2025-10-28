@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"log"
 	"strings"
 	"testing"
 	"time"
@@ -24,7 +25,9 @@ func TestParseInvalidChangelog(t *testing.T) {
 
 func TestParseInvalidChangelogWrongVersionDefinition(t *testing.T) {
 	r := strings.NewReader("# Changelog\n\n## 1.1.0\n\n### Added\n\n- v1.1 Brazilian Portuguese translation.\n- v1.1 German Translation\n- v1.1 Spanish translation.\n- v1.1 Italian translation.\n- v1.1 Polish translation.\n- v1.1 Ukrainian translation.")
-	_, err := Parse(r)
+	c, err := Parse(r)
+	log.Println(c, err)
+
 	if err == nil {
 		t.Fatal()
 	}

@@ -5,16 +5,10 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"regexp"
-	"strings"
 	"time"
 
 	"github.com/vold-lu/validate-a-changelog"
-)
-
-var (
-	versionRegex           = regexp.MustCompile(`^## \[([0-9.]+)\] - ([0-9]{4}-[0-9]{2}-[0-9]{2})$`)
-	unreleasedVersionRegex = regexp.MustCompile(`^## \[Unreleased\]$`)
+	"github.com/vold-lu/validate-a-changelog/internal"
 )
 
 func Parse(r io.Reader) (*validateachangelog.Changelog, error) {
@@ -32,7 +26,7 @@ func Parse(r io.Reader) (*validateachangelog.Changelog, error) {
 		line := scanner.Text()
 
 		// Parse version
-		if strings.HasPrefix(line, "## ") {
+		if internal.IsVersionLine(line) {
 			// Push current version if there is one
 			if currentVersion.Version != "" {
 				c.Versions = append(c.Versions, currentVersion)
@@ -44,13 +38,13 @@ func Parse(r io.Reader) (*validateachangelog.Changelog, error) {
 			}
 
 			// Parse the new version and register it
-			version, releaseDate, err := parseVersionLine(line)
-			if version == "" {
-				return nil, fmt.Errorf("invalid version line: %s", line)
-			}
-
+			version, releaseDate, err := internal.ParseVersionLine(line)
 			if err != nil {
 				return nil, err
+			}
+
+			if version == "" {
+				return nil, fmt.Errorf("invalid version line: %s", line)
 			}
 
 			currentVersion.Version = version
@@ -58,8 +52,12 @@ func Parse(r io.Reader) (*validateachangelog.Changelog, error) {
 		}
 
 		// Parse section (Added, Changed, Removed, Fixed)
-		if strings.HasPrefix(line, "### ") {
-			currentSection = strings.TrimPrefix(line, "### ")
+		if internal.IsSectionLine(line) {
+			currentSection = internal.ParseSectionLine(line)
+
+			if currentVersion.Version == "" {
+				return nil, fmt.Errorf("invalid changelog section: %s (no version found)", line)
+			}
 
 			if _, exists := currentVersion.Entries[currentSection]; exists {
 				currentVersion.Entries[currentSection] = []validateachangelog.Entry{}
@@ -67,8 +65,8 @@ func Parse(r io.Reader) (*validateachangelog.Changelog, error) {
 		}
 
 		// Parse entry
-		if strings.HasPrefix(line, "- ") {
-			entry := strings.TrimPrefix(line, "- ")
+		if internal.IsEntryLine(line) {
+			entry := internal.ParseEntryLine(line)
 
 			if currentSection == "" {
 				return nil, fmt.Errorf("invalid changelog entry: %s (no section found)", line)
@@ -106,31 +104,4 @@ func ParseFile(filename string) (*validateachangelog.Changelog, error) {
 	}()
 
 	return Parse(f)
-}
-
-func parseVersionLine(line string) (string, *time.Time, error) {
-	// Handle unreleased
-	if unreleasedVersionRegex.MatchString(line) {
-		return "Unreleased", nil, nil
-	}
-
-	parts := versionRegex.FindStringSubmatch(line)
-
-	version := ""
-	var releaseDate *time.Time
-
-	// Parse the version
-	if len(parts) > 1 {
-		version = parts[1]
-	}
-
-	// Parse the release date
-	if len(parts) > 2 {
-		t, err := time.Parse("2006-01-02", parts[2])
-		if err == nil {
-			releaseDate = &t
-		}
-	}
-
-	return version, releaseDate, nil
 }
