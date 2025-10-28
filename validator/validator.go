@@ -1,6 +1,10 @@
-package validateachangelog
+package validator
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/vold-lu/validate-a-changelog"
+)
 
 type Options struct {
 	AllowEmptyVersion       bool
@@ -8,7 +12,7 @@ type Options struct {
 	AllowInvalidChangeType  bool
 }
 
-func Validate(c *Changelog, opts *Options) error {
+func Validate(c *validateachangelog.Changelog, opts *Options) error {
 	if opts == nil {
 		opts = &Options{}
 	}

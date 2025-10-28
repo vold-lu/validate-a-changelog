@@ -1,12 +1,14 @@
-package validateachangelog
+package validator
 
 import (
 	"testing"
 	"time"
+
+	"github.com/vold-lu/validate-a-changelog"
 )
 
 func TestValidateEmptyChangelog(t *testing.T) {
-	c := &Changelog{}
+	c := &validateachangelog.Changelog{}
 
 	if err := Validate(c, nil); err == nil {
 		t.Fail()
@@ -14,12 +16,12 @@ func TestValidateEmptyChangelog(t *testing.T) {
 }
 
 func TestValidateChangelogMissingReleaseDateAndAllowed(t *testing.T) {
-	c := &Changelog{
-		Versions: []Version{
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries:     map[string][]Entry{},
+				Entries:     map[string][]validateachangelog.Entry{},
 			},
 		},
 	}
@@ -34,12 +36,12 @@ func TestValidateChangelogMissingReleaseDateAndAllowed(t *testing.T) {
 }
 
 func TestValidateChangelogMissingReleaseDateAndNotAllowed(t *testing.T) {
-	c := &Changelog{
-		Versions: []Version{
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries:     map[string][]Entry{},
+				Entries:     map[string][]validateachangelog.Entry{},
 			},
 		},
 	}
@@ -56,12 +58,12 @@ func TestValidateChangelogMissingReleaseDateAndNotAllowed(t *testing.T) {
 func TestValidateChangelogNonMissingReleaseDateAndNotAllowed(t *testing.T) {
 	releaseDate := time.Date(2023, 10, 10, 0, 0, 0, 0, time.UTC)
 
-	c := &Changelog{
-		Versions: []Version{
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: &releaseDate,
-				Entries:     map[string][]Entry{},
+				Entries:     map[string][]validateachangelog.Entry{},
 			},
 		},
 	}
@@ -76,12 +78,12 @@ func TestValidateChangelogNonMissingReleaseDateAndNotAllowed(t *testing.T) {
 }
 
 func TestValidateChangelogEmptyVersionAndAllowed(t *testing.T) {
-	c := &Changelog{
-		Versions: []Version{
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries:     map[string][]Entry{},
+				Entries:     map[string][]validateachangelog.Entry{},
 			},
 		},
 	}
@@ -96,12 +98,12 @@ func TestValidateChangelogEmptyVersionAndAllowed(t *testing.T) {
 }
 
 func TestValidateChangelogEmptyVersionAndNotAllowed(t *testing.T) {
-	c := &Changelog{
-		Versions: []Version{
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries:     map[string][]Entry{},
+				Entries:     map[string][]validateachangelog.Entry{},
 			},
 		},
 	}
@@ -116,12 +118,12 @@ func TestValidateChangelogEmptyVersionAndNotAllowed(t *testing.T) {
 }
 
 func TestValidateChangelogNonEmptyVersionAndNotAllowed(t *testing.T) {
-	c := &Changelog{
-		Versions: []Version{
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries: map[string][]Entry{
+				Entries: map[string][]validateachangelog.Entry{
 					"Added": {
 						{Description: "Test description"},
 					},
@@ -140,12 +142,12 @@ func TestValidateChangelogNonEmptyVersionAndNotAllowed(t *testing.T) {
 }
 
 func TestValidateChangelogInvalidChangeTypeAndAllowed(t *testing.T) {
-	c := &Changelog{
-		Versions: []Version{
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries: map[string][]Entry{
+				Entries: map[string][]validateachangelog.Entry{
 					"InvalidType": {
 						{Description: "Test description"},
 					},
@@ -164,12 +166,12 @@ func TestValidateChangelogInvalidChangeTypeAndAllowed(t *testing.T) {
 }
 
 func TestValidateChangelogInvalidChangeTypeAndNotAllowed(t *testing.T) {
-	c := &Changelog{
-		Versions: []Version{
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries: map[string][]Entry{
+				Entries: map[string][]validateachangelog.Entry{
 					"InvalidType": {
 						{Description: "Test description"},
 					},
@@ -188,12 +190,12 @@ func TestValidateChangelogInvalidChangeTypeAndNotAllowed(t *testing.T) {
 }
 
 func TestValidateChangelogValidChangeTypeAndNotAllowed(t *testing.T) {
-	c := &Changelog{
-		Versions: []Version{
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries: map[string][]Entry{
+				Entries: map[string][]validateachangelog.Entry{
 					"Added": {
 						{Description: "Test description"},
 					},

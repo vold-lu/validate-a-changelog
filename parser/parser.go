@@ -1,4 +1,4 @@
-package validateachangelog
+package parser
 
 import (
 	"bufio"
@@ -8,18 +8,20 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/vold-lu/validate-a-changelog"
 )
 
 var versionRegex = regexp.MustCompile(`^## \[([0-9.]+)\] - ([0-9]{4}-[0-9]{2}-[0-9]{2})$`)
 var unreleasedVersionRegex = regexp.MustCompile(`^## \[Unreleased\]$`)
 
-func Parse(r io.Reader) (*Changelog, error) {
-	c := &Changelog{}
+func Parse(r io.Reader) (*validateachangelog.Changelog, error) {
+	c := &validateachangelog.Changelog{}
 
-	currentVersion := Version{
+	currentVersion := validateachangelog.Version{
 		Version:     "",
 		ReleaseDate: &time.Time{},
-		Entries:     map[string][]Entry{},
+		Entries:     map[string][]validateachangelog.Entry{},
 	}
 	currentSection := ""
 
@@ -32,10 +34,10 @@ func Parse(r io.Reader) (*Changelog, error) {
 			// Push current version if there is one
 			if currentVersion.Version != "" {
 				c.Versions = append(c.Versions, currentVersion)
-				currentVersion = Version{
+				currentVersion = validateachangelog.Version{
 					Version:     "",
 					ReleaseDate: &time.Time{},
-					Entries:     map[string][]Entry{},
+					Entries:     map[string][]validateachangelog.Entry{},
 				}
 			}
 
@@ -54,7 +56,7 @@ func Parse(r io.Reader) (*Changelog, error) {
 			currentSection = strings.TrimPrefix(line, "### ")
 
 			if _, exists := currentVersion.Entries[currentSection]; exists {
-				currentVersion.Entries[currentSection] = []Entry{}
+				currentVersion.Entries[currentSection] = []validateachangelog.Entry{}
 			}
 		}
 
@@ -66,7 +68,7 @@ func Parse(r io.Reader) (*Changelog, error) {
 				return nil, fmt.Errorf("invalid changelog entry: %s (no section found)", line)
 			}
 
-			currentVersion.Entries[currentSection] = append(currentVersion.Entries[currentSection], Entry{
+			currentVersion.Entries[currentSection] = append(currentVersion.Entries[currentSection], validateachangelog.Entry{
 				Description: entry,
 			})
 		}
@@ -88,7 +90,7 @@ func Parse(r io.Reader) (*Changelog, error) {
 	return c, nil
 }
 
-func ParseFile(filename string) (*Changelog, error) {
+func ParseFile(filename string) (*validateachangelog.Changelog, error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return nil, err

@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	validateachangelog "github.com/vold-lu/validate-a-changelog"
+	validateachangelog "github.com/vold-lu/validate-a-changelog/parser"
 )
 
 func main() {
