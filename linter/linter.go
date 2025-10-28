@@ -98,13 +98,10 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 				switch strings.ToLower(currentSection) {
 				case "fix":
 					currentSection = "Fixed"
-					break
 				case "change":
 					currentSection = "Changed"
-					break
 				case "new":
 					currentSection = "Added"
-					break
 				}
 			}
 
