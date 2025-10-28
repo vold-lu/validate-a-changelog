@@ -59,7 +59,7 @@ func main() {
 			sb.WriteString("]")
 
 			if v.ReleaseDate != nil {
-				sb.WriteString(" ")
+				sb.WriteString(" - ")
 				sb.WriteString(v.ReleaseDate.Format("2006-01-02"))
 			}
 

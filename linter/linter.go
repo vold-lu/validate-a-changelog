@@ -15,6 +15,7 @@ import (
 
 var (
 	versionRegex           = regexp.MustCompile(`^## \[?([0-9.]+)\]? ?-? ?([0-9]{4}-[0-9]{2}-[0-9]{2})?$`)
+	frenchVersionRegex     = regexp.MustCompile(`^## \[?([0-9.]+)\]? ?-? ?([0-9]{2}-[0-9]{2}-[0-9]{4})?$`)
 	unreleasedVersionRegex = regexp.MustCompile(`^## \[?Unreleased\]?$`)
 )
 
@@ -74,7 +75,17 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 							releaseDate = &t
 						}
 					}
-
+				} else if frenchVersionRegex.MatchString(line) {
+					parts := frenchVersionRegex.FindStringSubmatch(line)
+					if len(parts) > 1 {
+						version = parts[1]
+					}
+					if len(parts) > 2 && parts[2] != "" {
+						t, err := time.Parse("02-01-2006", parts[2])
+						if err == nil {
+							releaseDate = &t
+						}
+					}
 				} else if unreleasedVersionRegex.MatchString(line) || len(c.Versions) == 0 {
 					version = "Unreleased"
 				}
