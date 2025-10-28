@@ -3,6 +3,7 @@ package validateachangelog
 import "time"
 
 type Changelog struct {
+	Title    string    `json:"title"`
 	Versions []Version `json:"versions"`
 }
 

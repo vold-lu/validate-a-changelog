@@ -6,12 +6,25 @@ import (
 )
 
 var (
+	titleRegex             = regexp.MustCompile(`^# (.*)$`)
 	versionRegex           = regexp.MustCompile(`^## \[([0-9.]+)\] ?-? ?([0-9]{4}-[0-9]{2}-[0-9]{2})?$`)
 	unreleasedVersionRegex = regexp.MustCompile(`^## \[Unreleased\]$`)
-
-	sectionRegex = regexp.MustCompile(`^### (.*)$`)
-	entryRegex   = regexp.MustCompile(`^- (.*)$`)
+	sectionRegex           = regexp.MustCompile(`^### (.*)$`)
+	entryRegex             = regexp.MustCompile(`^- (.*)$`)
 )
+
+func IsTitleLine(line string) bool {
+	return titleRegex.MatchString(line)
+}
+
+func ParseTitleLine(line string) string {
+	matches := titleRegex.FindStringSubmatch(line)
+	if len(matches) == 0 {
+		return ""
+	}
+
+	return matches[1]
+}
 
 func IsVersionLine(line string) bool {
 	return versionRegex.MatchString(line) || unreleasedVersionRegex.MatchString(line)

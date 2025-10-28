@@ -25,6 +25,11 @@ func Parse(r io.Reader) (*validateachangelog.Changelog, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
+		// Parse title
+		if internal.IsTitleLine(line) {
+			c.Title = internal.ParseTitleLine(line)
+		}
+
 		// Parse version
 		if internal.IsVersionLine(line) {
 			// Push current version if there is one

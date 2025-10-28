@@ -29,7 +29,7 @@ func main() {
 
 	// Output the whole changelog
 	if version == "" {
-		if err := json.NewEncoder(os.Stdout).Encode(c.Versions); err != nil {
+		if err := json.NewEncoder(os.Stdout).Encode(c); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}

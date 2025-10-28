@@ -45,6 +45,11 @@ func main() {
 			os.Exit(1)
 		}
 	} else {
+		// Handle title (if any)
+		if c.Title != "" {
+			fmt.Printf("# %s\n\n", c.Title)
+		}
+
 		for _, v := range c.Versions {
 			var sb strings.Builder
 

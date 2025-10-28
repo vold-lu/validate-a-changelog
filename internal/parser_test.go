@@ -6,6 +6,72 @@ import (
 	"time"
 )
 
+func TestIsTitleLine(t *testing.T) {
+	cases := []struct {
+		Line    string
+		IsValid bool
+	}{
+		{
+			Line:    "## [Unreleased]",
+			IsValid: false,
+		},
+		{
+			Line:    "## [0.1.0]",
+			IsValid: false,
+		},
+		{
+			Line:    "test",
+			IsValid: false,
+		},
+		{
+			Line:    "# 0.1.0",
+			IsValid: true,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(fmt.Sprintf("IsTitleLine(%s)", c.Line), func(t *testing.T) {
+			if ok := IsTitleLine(c.Line); ok != c.IsValid {
+				t.Logf("IsTitleLine(%s). Got %v, wanted %v", c.Line, ok, c.IsValid)
+				t.Fail()
+			}
+		})
+	}
+}
+
+func TestParseTitleLine(t *testing.T) {
+	cases := []struct {
+		Line  string
+		Title string
+	}{
+		{
+			Line: "## [Unreleased]",
+		},
+		{
+			Line: "## [0.1.0]",
+		},
+		{
+			Line:  "# 0.1.0",
+			Title: "0.1.0",
+		},
+		{
+			Line: "Test",
+		},
+		{
+			Line: "## 0.1.0 - 2025-10-28",
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(fmt.Sprintf("ParseTitleLine(%s)", c.Line), func(t *testing.T) {
+			if titleLine := ParseTitleLine(c.Line); titleLine != c.Title {
+				t.Logf("ParseTitleLine(%s). Expected %s got: %s", c.Line, c.Title, titleLine)
+				t.Fail()
+			}
+		})
+	}
+}
+
 func TestIsVersionLine(t *testing.T) {
 	cases := []struct {
 		Line    string
@@ -102,7 +168,7 @@ func TestParseVersionLine(t *testing.T) {
 		t.Run(fmt.Sprintf("ParseVersionLine(%s)", c.Line), func(t *testing.T) {
 			version, releaseDate, err := ParseVersionLine(c.Line)
 			if err != nil && c.IsValid {
-				t.Logf("IsVersionLine(%s). Expected no errors but: %v", c.Line, err)
+				t.Logf("ParseVersionLine(%s). Expected no errors but: %v", c.Line, err)
 				t.Fail()
 
 				return
@@ -114,7 +180,7 @@ func TestParseVersionLine(t *testing.T) {
 			}
 
 			if (releaseDate == nil && c.ReleaseDate != nil) || (releaseDate != nil && c.ReleaseDate == nil) {
-				t.Logf("IsVersionLine(%s). Got %v, wanted %v", c.Line, releaseDate, c.ReleaseDate)
+				t.Logf("ParseVersionLine(%s). Got %v, wanted %v", c.Line, releaseDate, c.ReleaseDate)
 				t.Fail()
 
 				return
@@ -122,7 +188,7 @@ func TestParseVersionLine(t *testing.T) {
 
 			if releaseDate != nil && c.ReleaseDate != nil {
 				if *releaseDate != *c.ReleaseDate {
-					t.Logf("IsVersionLine(%s). Got %v, wanted %v", c.Line, releaseDate, c.ReleaseDate)
+					t.Logf("ParseVersionLine(%s). Got %v, wanted %v", c.Line, releaseDate, c.ReleaseDate)
 					t.Fail()
 				}
 			}

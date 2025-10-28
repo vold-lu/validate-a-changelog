@@ -37,6 +37,12 @@ func TestParseValidChangelog(t *testing.T) {
 		t.Fatal()
 	}
 
+	// Validate the title
+	if c.Title != "Changelog" {
+		t.Logf("Expected title to be \"Changelog\", got \"%v\"", c.Title)
+		t.Fail()
+	}
+
 	// Validate the number of versions
 	if len(c.Versions) != 15 {
 		t.Logf("Expected 15 versions. Got: %d", len(c.Versions))
@@ -73,6 +79,4 @@ func TestParseValidChangelog(t *testing.T) {
 		t.Logf("Expected 2023-03-05 release date in c.Versions[1].ReleaseDate. Got: %s", c.Versions[1].ReleaseDate)
 		t.Fail()
 	}
-
-	// TODO
 }

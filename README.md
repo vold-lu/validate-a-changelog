@@ -5,17 +5,18 @@ Parse and validate Changelog following [keep a changelog](https://keepachangelog
 ## cmd/parse-changelog
 
 ```
-Usage: parse-changelog <file>
+Usage: parse-changelog <file> [version]
 ```
 
 Sample output for the test changelog in keep a changelog website:
 
 ```json
 {
+  "title": "Changelog",
   "versions": [
     {
       "version": "Unreleased",
-      "release_date": "0001-01-01T00:00:00Z",
+      "release_date": null,
       "entries": {
         "Added": [
           {
@@ -37,15 +38,15 @@ Sample output for the test changelog in keep a changelog website:
             "description": "v1.1 Ukrainian translation."
           }
         ],
-        "Changed": [
+        "Change": [
           {
-            "description": "Use frontmatter title \u0026 description in each language version template"
+            "description": "Use frontmatter title & description in each language version template"
           },
           {
             "description": "Replace broken OpenGraph image with an appropriately-sized Keep a Changelog "
           },
           {
-            "description": "Fix OpenGraph title \u0026 description for all languages so the title and "
+            "description": "Fix OpenGraph title & description for all languages so the title and "
           }
         ],
         "Removed": [
@@ -211,7 +212,7 @@ Sample output for the test changelog in keep a changelog website:
             "description": "Simplified and Traditional Chinese translations from [@tianshuo](https://github.com/tianshuo)."
           },
           {
-            "description": "German translation from [@mpbzh](https://github.com/mpbzh) \u0026 [@Art4](https://github.com/Art4)."
+            "description": "German translation from [@mpbzh](https://github.com/mpbzh) & [@Art4](https://github.com/Art4)."
           },
           {
             "description": "Italian translation from [@azkidenz](https://github.com/azkidenz)."
@@ -229,7 +230,7 @@ Sample output for the test changelog in keep a changelog website:
             "description": "Brazilian Portuguese translation from [@Webysther](https://github.com/Webysther)."
           },
           {
-            "description": "Polish translation from [@amielucha](https://github.com/amielucha) \u0026 [@m-aciek](https://github.com/m-aciek)."
+            "description": "Polish translation from [@amielucha](https://github.com/amielucha) & [@m-aciek](https://github.com/m-aciek)."
           },
           {
             "description": "Russian translation from [@aishek](https://github.com/aishek)."
