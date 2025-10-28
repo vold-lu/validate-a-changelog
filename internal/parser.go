@@ -10,7 +10,7 @@ var (
 	versionRegex           = regexp.MustCompile(`^## \[([0-9.]+)\] ?-? ?([0-9]{4}-[0-9]{2}-[0-9]{2})?$`)
 	unreleasedVersionRegex = regexp.MustCompile(`^## \[Unreleased\]$`)
 	sectionRegex           = regexp.MustCompile(`^### (.*)$`)
-	entryRegex             = regexp.MustCompile(`^- (.*)$`)
+	entryRegex             = regexp.MustCompile(`^[ \t]*- (.*)$`)
 )
 
 func IsTitleLine(line string) bool {

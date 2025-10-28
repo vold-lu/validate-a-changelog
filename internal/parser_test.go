@@ -278,6 +278,14 @@ func TestIsEntryLine(t *testing.T) {
 			Line:    "Added",
 			IsValid: false,
 		},
+		{
+			Line:    " - Test",
+			IsValid: true,
+		},
+		{
+			Line:    "	- Test",
+			IsValid: true,
+		},
 	}
 
 	for _, c := range cases {
@@ -307,6 +315,14 @@ func TestParseEntryLine(t *testing.T) {
 		},
 		{
 			Line: "Other",
+		},
+		{
+			Line:  " - Test",
+			Entry: "Test",
+		},
+		{
+			Line:  "	- Test",
+			Entry: "Test",
 		},
 	}
 

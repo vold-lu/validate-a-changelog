@@ -80,3 +80,35 @@ func TestParseValidChangelog(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestParseValidChangelogMultipleSpaceBeforeEntry(t *testing.T) {
+	r := strings.NewReader("# Changelog\n\n## [Unreleased]\n\n### Added\n\n    - v1.1 Brazilian Portuguese translation.\n	- v1.1 German Translation\n- v1.1 Spanish translation.\n- v1.1 Italian translation.\n- v1.1 Polish translation.\n- v1.1 Ukrainian translation.\n\n")
+	c, err := Parse(r)
+	if err != nil || c == nil {
+		t.Fatal()
+	}
+
+	// Validate the title
+	if c.Title != "Changelog" {
+		t.Logf("Expected title to be \"Changelog\", got \"%v\"", c.Title)
+		t.Fail()
+	}
+
+	// Validate the number of versions
+	if len(c.Versions) != 1 {
+		t.Logf("Expected 1 versions. Got: %d", len(c.Versions))
+		t.Fatal()
+	}
+
+	if c.Versions[0].Version != "Unreleased" {
+		t.Logf("Expected Unreleased version in c.Versions[0]. Got: %s", c.Versions[0].Version)
+		t.Fail()
+	}
+
+	// Validate Unreleased version details
+	if len(c.Versions[0].Entries["Added"]) != 6 {
+		t.Logf("Expected 6 added entries in c.Versions[0]. Got: %d", len(c.Versions[0].Entries["Added"]))
+		t.Logf("%v", c.Versions[0].Entries["Added"])
+		t.Fail()
+	}
+}

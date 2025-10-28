@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Introduce cmd/lint-changelog.
 - Parse changelog title.
 
+### Changed
+
+- Make parser more flexible regarding entry line 
+
 ## [0.3.0] - 2025-10-28
 
 ### Added
