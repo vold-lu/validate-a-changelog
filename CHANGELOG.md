@@ -14,7 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Make parser more flexible regarding entry line 
+- Make parser more flexible regarding entry line.
+
+### Fixed
+
+- Handle malformed version with no section.
 
 ## [0.3.0] - 2025-10-28
 

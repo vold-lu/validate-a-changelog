@@ -40,6 +40,7 @@ func Parse(r io.Reader) (*validateachangelog.Changelog, error) {
 					ReleaseDate: &time.Time{},
 					Entries:     map[string][]validateachangelog.Entry{},
 				}
+				currentSection = ""
 			}
 
 			// Parse the new version and register it

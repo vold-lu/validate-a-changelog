@@ -112,3 +112,11 @@ func TestParseValidChangelogMultipleSpaceBeforeEntry(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestParseInvalidChangelogMissingSection(t *testing.T) {
+	r := strings.NewReader("# Changelog\n\n## [1.1.0]\n\n### Added\n\n- v1.1 Brazilian Portuguese translation.\n\n## [1.0.0]\n\n- v1.1 Brazilian Portuguese translation.")
+	_, err := Parse(r)
+	if err == nil {
+		t.Fatal()
+	}
+}
