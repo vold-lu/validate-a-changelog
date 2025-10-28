@@ -45,6 +45,10 @@ func Parse(r io.Reader) (*validateachangelog.Changelog, error) {
 
 			// Parse the new version and register it
 			version, releaseDate, err := parseVersionLine(line)
+			if version == "" {
+				return nil, fmt.Errorf("invalid version line: %s", line)
+			}
+
 			if err != nil {
 				return nil, err
 			}
