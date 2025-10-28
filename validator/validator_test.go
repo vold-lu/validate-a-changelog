@@ -272,3 +272,103 @@ func TestValidateChangelogInvalidVersion(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestValidateChangelogGoodVersionOrder(t *testing.T) {
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
+			{
+				Version:     "1.0.0",
+				ReleaseDate: nil,
+				Entries:     map[string][]validateachangelog.Entry{},
+			},
+			{
+				Version:     "0.15.10",
+				ReleaseDate: nil,
+				Entries:     map[string][]validateachangelog.Entry{},
+			},
+		},
+	}
+
+	if err := Validate(c, &Options{
+		AllowMissingReleaseDate: true,
+		AllowEmptyVersion:       true,
+		AllowInvalidChangeType:  true,
+	}); err != nil {
+		t.Fail()
+	}
+}
+
+func TestValidateChangelogGoodVersionOrderWithUnreleased(t *testing.T) {
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
+			{
+				Version:     "Unreleased",
+				ReleaseDate: nil,
+				Entries:     map[string][]validateachangelog.Entry{},
+			},
+			{
+				Version:     "1.0.0",
+				ReleaseDate: nil,
+				Entries:     map[string][]validateachangelog.Entry{},
+			},
+		},
+	}
+
+	if err := Validate(c, &Options{
+		AllowMissingReleaseDate: true,
+		AllowEmptyVersion:       true,
+		AllowInvalidChangeType:  true,
+	}); err != nil {
+		t.Fail()
+	}
+}
+
+func TestValidateChangelogBadVersionOrder(t *testing.T) {
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
+			{
+				Version:     "0.15.10",
+				ReleaseDate: nil,
+				Entries:     map[string][]validateachangelog.Entry{},
+			},
+			{
+				Version:     "1.0.0",
+				ReleaseDate: nil,
+				Entries:     map[string][]validateachangelog.Entry{},
+			},
+		},
+	}
+
+	if err := Validate(c, &Options{
+		AllowMissingReleaseDate: true,
+		AllowEmptyVersion:       true,
+		AllowInvalidChangeType:  true,
+	}); err == nil {
+		t.Fail()
+	}
+}
+
+func TestValidateChangelogBadVersionOrderWithUnreleased(t *testing.T) {
+	c := &validateachangelog.Changelog{
+		Versions: []validateachangelog.Version{
+			{
+				Version:     "0.15.10",
+				ReleaseDate: nil,
+				Entries:     map[string][]validateachangelog.Entry{},
+			},
+			{
+				Version:     "Unreleased",
+				ReleaseDate: nil,
+				Entries:     map[string][]validateachangelog.Entry{},
+			},
+		},
+	}
+
+	if err := Validate(c, &Options{
+		AllowMissingReleaseDate: true,
+		AllowEmptyVersion:       true,
+		AllowInvalidChangeType:  true,
+	}); err == nil {
+		t.Fail()
+	}
+}
