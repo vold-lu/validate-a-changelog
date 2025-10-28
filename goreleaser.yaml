@@ -1,0 +1,31 @@
+before:
+  hooks:
+    - go mod download
+builds:
+  - id: parse-changelog
+    main: ./cmd/parse-changelog/
+    binary: parse-changelog
+    goos:
+      - linux
+    goarch:
+      - amd64
+  - id: validate-changelog
+    main: ./cmd/validate-changelog/
+    binary: validate-changelog
+    goos:
+      - linux
+    goarch:
+      - amd64
+dockers:
+  - goos: linux
+    goarch: amd64
+    image_templates:
+      - "voldlu/validate-a-changelog:latest"
+      - "voldlu/validate-a-changelog:{{ replace .Tag \"v\" \"\" }}"
+      - "voldlu/validate-a-changelog:{{ .Major }}"
+    skip_push: false
+    dockerfile: build/docker/Dockerfile
+checksum:
+  name_template: 'checksums.txt'
+release:
+  prerelease: true
