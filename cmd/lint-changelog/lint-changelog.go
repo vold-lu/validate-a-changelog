@@ -67,7 +67,7 @@ func main() {
 
 			// Handle section (sorted)
 			for _, changeType := range sortedStandardChangeTypes {
-				if entries, exists := v.Entries[changeType]; exists {
+				if entries, exists := v.Entries.Get(changeType); exists {
 					// Handle section line
 					sb.WriteString("### ")
 					sb.WriteString(changeType)

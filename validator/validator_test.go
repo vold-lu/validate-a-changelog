@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/vold-lu/validate-a-changelog"
+	"github.com/vold-lu/validate-a-changelog/internal"
 )
 
 func TestValidateEmptyChangelog(t *testing.T) {
@@ -21,7 +22,7 @@ func TestValidateChangelogMissingReleaseDateAndNotAllowed(t *testing.T) {
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 		},
 	}
@@ -42,7 +43,7 @@ func TestValidateChangelogMissingReleaseDateUnreleasedVersionAndNotAllowed(t *te
 			{
 				Version:     "Unreleased",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 		},
 	}
@@ -63,7 +64,7 @@ func TestValidateChangelogMissingReleaseDateAndAllowed(t *testing.T) {
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 		},
 	}
@@ -86,7 +87,7 @@ func TestValidateChangelogNonMissingReleaseDateAndNotAllowed(t *testing.T) {
 			{
 				Version:     "1.0.0",
 				ReleaseDate: &releaseDate,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 		},
 	}
@@ -107,7 +108,7 @@ func TestValidateChangelogEmptyVersionAndAllowed(t *testing.T) {
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 		},
 	}
@@ -128,7 +129,7 @@ func TestValidateChangelogEmptyVersionAndNotAllowed(t *testing.T) {
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 		},
 	}
@@ -149,7 +150,7 @@ func TestValidateChangelogEmptyUnreleasedVersionAndNotAllowed(t *testing.T) {
 			{
 				Version:     "Unreleased",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 		},
 	}
@@ -170,11 +171,11 @@ func TestValidateChangelogNonEmptyVersionAndNotAllowed(t *testing.T) {
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries: map[string][]validateachangelog.Entry{
+				Entries: *internal.NewSortedMap([]string{"Added"}, map[string][]validateachangelog.Entry{
 					"Added": {
 						{Description: "Test description"},
 					},
-				},
+				}),
 			},
 		},
 	}
@@ -195,11 +196,11 @@ func TestValidateChangelogInvalidChangeTypeAndAllowed(t *testing.T) {
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries: map[string][]validateachangelog.Entry{
+				Entries: *internal.NewSortedMap([]string{"InvalidType"}, map[string][]validateachangelog.Entry{
 					"InvalidType": {
 						{Description: "Test description"},
 					},
-				},
+				}),
 			},
 		},
 	}
@@ -220,11 +221,11 @@ func TestValidateChangelogInvalidChangeTypeAndNotAllowed(t *testing.T) {
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries: map[string][]validateachangelog.Entry{
+				Entries: *internal.NewSortedMap([]string{"InvalidType"}, map[string][]validateachangelog.Entry{
 					"InvalidType": {
 						{Description: "Test description"},
 					},
-				},
+				}),
 			},
 		},
 	}
@@ -245,11 +246,11 @@ func TestValidateChangelogValidChangeTypeAndNotAllowed(t *testing.T) {
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries: map[string][]validateachangelog.Entry{
+				Entries: *internal.NewSortedMap([]string{"Added"}, map[string][]validateachangelog.Entry{
 					"Added": {
 						{Description: "Test description"},
 					},
-				},
+				}),
 			},
 		},
 	}
@@ -270,7 +271,7 @@ func TestValidateChangelogInvalidVersion(t *testing.T) {
 			{
 				Version:     "Test",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 		},
 	}
@@ -291,12 +292,12 @@ func TestValidateChangelogGoodVersionOrder(t *testing.T) {
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 			{
 				Version:     "0.15.10",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 		},
 	}
@@ -317,12 +318,12 @@ func TestValidateChangelogGoodVersionOrderWithUnreleased(t *testing.T) {
 			{
 				Version:     "Unreleased",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 		},
 	}
@@ -343,12 +344,12 @@ func TestValidateChangelogBadVersionOrder(t *testing.T) {
 			{
 				Version:     "0.15.10",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 		},
 	}
@@ -369,12 +370,12 @@ func TestValidateChangelogBadVersionOrderWithUnreleased(t *testing.T) {
 			{
 				Version:     "0.15.10",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 			{
 				Version:     "Unreleased",
 				ReleaseDate: nil,
-				Entries:     map[string][]validateachangelog.Entry{},
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 			},
 		},
 	}
@@ -395,14 +396,14 @@ func TestValidateChangelogInvalidChangeTypeOrderAndAllowed(t *testing.T) {
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries: map[string][]validateachangelog.Entry{
+				Entries: *internal.NewSortedMap([]string{"Removed", "Added"}, map[string][]validateachangelog.Entry{
 					"Removed": {
 						{Description: "Test description"},
 					},
 					"Added": {
 						{Description: "Test description"},
 					},
-				},
+				}),
 			},
 		},
 	}
@@ -423,14 +424,14 @@ func TestValidateChangelogInvalidChangeTypeOrderAndNotAllowed(t *testing.T) {
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries: map[string][]validateachangelog.Entry{
+				Entries: *internal.NewSortedMap([]string{"Removed", "Added"}, map[string][]validateachangelog.Entry{
 					"Removed": {
 						{Description: "Test description"},
 					},
 					"Added": {
 						{Description: "Test description"},
 					},
-				},
+				}),
 			},
 		},
 	}
@@ -451,7 +452,7 @@ func TestValidateChangelogValidChangeTypeOrderAndNotAllowed(t *testing.T) {
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries: map[string][]validateachangelog.Entry{
+				Entries: *internal.NewSortedMap([]string{"Added", "Changed", "Removed", "Fixed"}, map[string][]validateachangelog.Entry{
 					"Added": {
 						{Description: "Test description"},
 					},
@@ -464,7 +465,7 @@ func TestValidateChangelogValidChangeTypeOrderAndNotAllowed(t *testing.T) {
 					"Fixed": {
 						{Description: "Test description"},
 					},
-				},
+				}),
 			},
 		},
 	}
@@ -485,7 +486,7 @@ func TestValidateChangelogInvalidChangeTypeOrderAndNotAllowedWithCustomChangeTyp
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries: map[string][]validateachangelog.Entry{
+				Entries: *internal.NewSortedMap([]string{"Waaza", "Removed", "Added"}, map[string][]validateachangelog.Entry{
 					"Waaza": {
 						{Description: "Test description"},
 					},
@@ -495,7 +496,7 @@ func TestValidateChangelogInvalidChangeTypeOrderAndNotAllowedWithCustomChangeTyp
 					"Added": {
 						{Description: "Test description"},
 					},
-				},
+				}),
 			},
 		},
 	}
@@ -516,7 +517,7 @@ func TestValidateChangelogValidChangeTypeOrderAndNotAllowedWithCustomChangeType(
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
-				Entries: map[string][]validateachangelog.Entry{
+				Entries: *internal.NewSortedMap([]string{"Added", "Removed", "Waaza"}, map[string][]validateachangelog.Entry{
 					"Added": {
 						{Description: "Test description"},
 					},
@@ -526,7 +527,7 @@ func TestValidateChangelogValidChangeTypeOrderAndNotAllowedWithCustomChangeType(
 					"Waaza": {
 						{Description: "Test description"},
 					},
-				},
+				}),
 			},
 		},
 	}

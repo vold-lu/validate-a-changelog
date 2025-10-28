@@ -54,13 +54,13 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 		}
 
 		// Make sure release contains entries
-		if len(version.Entries) == 0 && !opts.AllowEmptyVersion && version.Version != unreleasedVersion {
+		if version.Entries.Len() == 0 && !opts.AllowEmptyVersion && version.Version != unreleasedVersion {
 			err.pushIssue(version.Version, "", "no sections found in changelog entry")
 		}
 
 		// Make sure entries have valid change type
 		if !opts.AllowInvalidChangeType {
-			for changeType := range version.Entries {
+			for _, changeType := range version.Entries.Keys() {
 				if _, exists := standardChangeTypes[changeType]; !exists {
 					err.pushIssue(version.Version, changeType, "invalid change type in changelog entry")
 				}
@@ -87,7 +87,7 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 		if !opts.AllowInvalidChangeTypeOrder {
 			previousChangeType := ""
 
-			for changeType := range version.Entries {
+			for _, changeType := range version.Entries.Keys() {
 				if previousChangeType != "" {
 
 					var previousChangeTypeWeight int

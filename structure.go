@@ -1,6 +1,10 @@
 package validateachangelog
 
-import "time"
+import (
+	"time"
+
+	"github.com/vold-lu/validate-a-changelog/internal"
+)
 
 type Changelog struct {
 	Title    string    `json:"title"`
@@ -11,7 +15,7 @@ type Version struct {
 	Version     string     `json:"version"`
 	ReleaseDate *time.Time `json:"release_date"`
 
-	Entries map[string][]Entry `json:"entries"`
+	Entries internal.SortedMap[string, []Entry] `json:"entries"`
 }
 
 type Entry struct {

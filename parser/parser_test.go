@@ -60,17 +60,16 @@ func TestParseValidChangelog(t *testing.T) {
 	}
 
 	// Validate Unreleased version details
-	if len(c.Versions[0].Entries["Added"]) != 6 {
-		t.Logf("Expected 6 added entries in c.Versions[0]. Got: %d", len(c.Versions[0].Entries["Added"]))
-		t.Logf("%v", c.Versions[0].Entries["Added"])
+	if v, _ := c.Versions[0].Entries.Get("Added"); len(v) != 6 {
+		t.Logf("Expected 6 added entries in c.Versions[0]. Got: %d", len(v))
 		t.Fail()
 	}
-	if len(c.Versions[0].Entries["Changed"]) != 3 {
-		t.Logf("Expected 3 changed entries in c.Versions[0]. Got %d", len(c.Versions[0].Entries["Changed"]))
+	if v, _ := c.Versions[0].Entries.Get("Changed"); len(v) != 3 {
+		t.Logf("Expected 3 changed entries in c.Versions[0]. Got %d", len(v))
 		t.Fail()
 	}
-	if len(c.Versions[0].Entries["Removed"]) != 1 {
-		t.Logf("Expected 1 removed entries in c.Versions[0]. Got: %d", len(c.Versions[0].Entries["Removed"]))
+	if v, _ := c.Versions[0].Entries.Get("Removed"); len(v) != 1 {
+		t.Logf("Expected 1 removed entries in c.Versions[0]. Got: %d", len(v))
 		t.Fail()
 	}
 
@@ -106,9 +105,8 @@ func TestParseValidChangelogMultipleSpaceBeforeEntry(t *testing.T) {
 	}
 
 	// Validate Unreleased version details
-	if len(c.Versions[0].Entries["Added"]) != 6 {
-		t.Logf("Expected 6 added entries in c.Versions[0]. Got: %d", len(c.Versions[0].Entries["Added"]))
-		t.Logf("%v", c.Versions[0].Entries["Added"])
+	if v, _ := c.Versions[0].Entries.Get("Added"); len(v) != 6 {
+		t.Logf("Expected 6 added entries in c.Versions[0]. Got: %d", len(v))
 		t.Fail()
 	}
 }

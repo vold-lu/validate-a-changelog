@@ -24,7 +24,7 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 	currentVersion := validateachangelog.Version{
 		Version:     "",
 		ReleaseDate: &time.Time{},
-		Entries:     map[string][]validateachangelog.Entry{},
+		Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 	}
 	currentSection := ""
 
@@ -47,7 +47,7 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 				currentVersion = validateachangelog.Version{
 					Version:     "",
 					ReleaseDate: &time.Time{},
-					Entries:     map[string][]validateachangelog.Entry{},
+					Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
 				}
 				currentSection = ""
 			}
@@ -112,8 +112,8 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 				return nil, fmt.Errorf("invalid changelog section: %s (no version found)", line)
 			}
 
-			if _, exists := currentVersion.Entries[currentSection]; exists {
-				currentVersion.Entries[currentSection] = []validateachangelog.Entry{}
+			if !currentVersion.Entries.Has(currentSection) {
+				_ = currentVersion.Entries.Set(currentSection, []validateachangelog.Entry{})
 			}
 		} else if internal.IsEntryLine(line) {
 			// Parse entry
@@ -127,9 +127,12 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 				return nil, fmt.Errorf("invalid changelog entry: %s (no section found)", line)
 			}
 
-			currentVersion.Entries[currentSection] = append(currentVersion.Entries[currentSection], validateachangelog.Entry{
+			// Todo: optimise?
+			currentVersionEntries, _ := currentVersion.Entries.Get(currentSection)
+			currentVersionEntries = append(currentVersionEntries, validateachangelog.Entry{
 				Description: entry,
 			})
+			_ = currentVersion.Entries.Set(currentSection, currentVersionEntries)
 		} else if strings.Trim(line, " ") != "" {
 			if !strings.HasSuffix(line, ".") {
 				line = fmt.Sprintf("%s.", line)
@@ -139,13 +142,16 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 				currentSection = "Added"
 			}
 
-			if _, exists := currentVersion.Entries[currentSection]; exists {
-				currentVersion.Entries[currentSection] = []validateachangelog.Entry{}
+			if !currentVersion.Entries.Has(currentSection) {
+				_ = currentVersion.Entries.Set(currentSection, []validateachangelog.Entry{})
 			}
 
-			currentVersion.Entries[currentSection] = append(currentVersion.Entries[currentSection], validateachangelog.Entry{
+			// Todo: optimise?
+			currentVersionEntries, _ := currentVersion.Entries.Get(currentSection)
+			currentVersionEntries = append(currentVersionEntries, validateachangelog.Entry{
 				Description: line,
 			})
+			_ = currentVersion.Entries.Set(currentSection, currentVersionEntries)
 		}
 	}
 
