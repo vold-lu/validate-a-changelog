@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- docker: use alpine as base image, remove entrypoint.
+
 ## [0.4.0] - 2025-10-28
 
 ### Added
