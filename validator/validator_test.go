@@ -455,7 +455,13 @@ func TestValidateChangelogValidChangeTypeOrderAndNotAllowed(t *testing.T) {
 					"Added": {
 						{Description: "Test description"},
 					},
+					"Changed": {
+						{Description: "Test description"},
+					},
 					"Removed": {
+						{Description: "Test description"},
+					},
+					"Fixed": {
 						{Description: "Test description"},
 					},
 				},

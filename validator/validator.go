@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/vold-lu/validate-a-changelog"
@@ -104,7 +105,7 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 					}
 
 					if previousChangeTypeWeight > currentChangeTypeWeight {
-						err.pushIssue(version.Version, changeType, "unsorted change type in changelog entry")
+						err.pushIssue(version.Version, changeType, fmt.Sprintf("unsorted change type in changelog entry (%s > %s)", changeType, previousChangeType))
 					}
 				}
 
