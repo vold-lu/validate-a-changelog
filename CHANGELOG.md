@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Introduce internal library.
+
+### Changed
+
+- cmd/validate-changelog: add new -allow-invalid-change-type-order flag.
+
 ## [0.2.0] - 2025-10-28
 
 ### Changed
@@ -29,4 +37,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-Initial commit.
+- Initial commit.
