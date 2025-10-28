@@ -18,7 +18,7 @@ func TestValidateEmptyChangelog(t *testing.T) {
 
 func TestValidateChangelogMissingReleaseDateAndNotAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
@@ -39,7 +39,7 @@ func TestValidateChangelogMissingReleaseDateAndNotAllowed(t *testing.T) {
 
 func TestValidateChangelogMissingReleaseDateUnreleasedVersionAndNotAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "Unreleased",
 				ReleaseDate: nil,
@@ -60,7 +60,7 @@ func TestValidateChangelogMissingReleaseDateUnreleasedVersionAndNotAllowed(t *te
 
 func TestValidateChangelogMissingReleaseDateAndAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
@@ -83,7 +83,7 @@ func TestValidateChangelogNonMissingReleaseDateAndNotAllowed(t *testing.T) {
 	releaseDate := time.Date(2023, 10, 10, 0, 0, 0, 0, time.UTC)
 
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: &releaseDate,
@@ -104,7 +104,7 @@ func TestValidateChangelogNonMissingReleaseDateAndNotAllowed(t *testing.T) {
 
 func TestValidateChangelogEmptyVersionAndAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
@@ -125,7 +125,7 @@ func TestValidateChangelogEmptyVersionAndAllowed(t *testing.T) {
 
 func TestValidateChangelogEmptyVersionAndNotAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
@@ -146,7 +146,7 @@ func TestValidateChangelogEmptyVersionAndNotAllowed(t *testing.T) {
 
 func TestValidateChangelogEmptyUnreleasedVersionAndNotAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "Unreleased",
 				ReleaseDate: nil,
@@ -167,7 +167,7 @@ func TestValidateChangelogEmptyUnreleasedVersionAndNotAllowed(t *testing.T) {
 
 func TestValidateChangelogNonEmptyVersionAndNotAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
@@ -192,7 +192,7 @@ func TestValidateChangelogNonEmptyVersionAndNotAllowed(t *testing.T) {
 
 func TestValidateChangelogInvalidChangeTypeAndAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
@@ -217,7 +217,7 @@ func TestValidateChangelogInvalidChangeTypeAndAllowed(t *testing.T) {
 
 func TestValidateChangelogInvalidChangeTypeAndNotAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
@@ -242,7 +242,7 @@ func TestValidateChangelogInvalidChangeTypeAndNotAllowed(t *testing.T) {
 
 func TestValidateChangelogValidChangeTypeAndNotAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
@@ -267,7 +267,7 @@ func TestValidateChangelogValidChangeTypeAndNotAllowed(t *testing.T) {
 
 func TestValidateChangelogInvalidVersion(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "Test",
 				ReleaseDate: nil,
@@ -288,7 +288,7 @@ func TestValidateChangelogInvalidVersion(t *testing.T) {
 
 func TestValidateChangelogGoodVersionOrder(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
@@ -314,7 +314,7 @@ func TestValidateChangelogGoodVersionOrder(t *testing.T) {
 
 func TestValidateChangelogGoodVersionOrderWithUnreleased(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "Unreleased",
 				ReleaseDate: nil,
@@ -340,7 +340,7 @@ func TestValidateChangelogGoodVersionOrderWithUnreleased(t *testing.T) {
 
 func TestValidateChangelogBadVersionOrder(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "0.15.10",
 				ReleaseDate: nil,
@@ -366,7 +366,7 @@ func TestValidateChangelogBadVersionOrder(t *testing.T) {
 
 func TestValidateChangelogBadVersionOrderWithUnreleased(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "0.15.10",
 				ReleaseDate: nil,
@@ -392,7 +392,7 @@ func TestValidateChangelogBadVersionOrderWithUnreleased(t *testing.T) {
 
 func TestValidateChangelogInvalidChangeTypeOrderAndAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
@@ -420,7 +420,7 @@ func TestValidateChangelogInvalidChangeTypeOrderAndAllowed(t *testing.T) {
 
 func TestValidateChangelogInvalidChangeTypeOrderAndNotAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
@@ -448,7 +448,7 @@ func TestValidateChangelogInvalidChangeTypeOrderAndNotAllowed(t *testing.T) {
 
 func TestValidateChangelogValidChangeTypeOrderAndNotAllowed(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
@@ -482,7 +482,7 @@ func TestValidateChangelogValidChangeTypeOrderAndNotAllowed(t *testing.T) {
 
 func TestValidateChangelogInvalidChangeTypeOrderAndNotAllowedWithCustomChangeType(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,
@@ -513,7 +513,7 @@ func TestValidateChangelogInvalidChangeTypeOrderAndNotAllowedWithCustomChangeTyp
 
 func TestValidateChangelogValidChangeTypeOrderAndNotAllowedWithCustomChangeType(t *testing.T) {
 	c := &validateachangelog.Changelog{
-		Versions: []validateachangelog.Version{
+		Versions: []*validateachangelog.Version{
 			{
 				Version:     "1.0.0",
 				ReleaseDate: nil,

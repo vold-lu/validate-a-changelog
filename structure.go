@@ -7,8 +7,8 @@ import (
 )
 
 type Changelog struct {
-	Title    string    `json:"title"`
-	Versions []Version `json:"versions"`
+	Title    string     `json:"title"`
+	Versions []*Version `json:"versions"`
 }
 
 type Version struct {

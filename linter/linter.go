@@ -21,7 +21,7 @@ var (
 func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 	c := &validateachangelog.Changelog{}
 
-	currentVersion := validateachangelog.Version{
+	currentVersion := &validateachangelog.Version{
 		Version:     "",
 		ReleaseDate: &time.Time{},
 		Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
@@ -44,7 +44,7 @@ func Lint(r io.Reader) (*validateachangelog.Changelog, error) {
 			// Push current version if there is one
 			if currentVersion.Version != "" {
 				c.Versions = append(c.Versions, currentVersion)
-				currentVersion = validateachangelog.Version{
+				currentVersion = &validateachangelog.Version{
 					Version:     "",
 					ReleaseDate: &time.Time{},
 					Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
