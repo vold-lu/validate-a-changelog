@@ -40,6 +40,14 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 	}
 
 	standardChangeTypes := internal.GetStandardChangeTypes()
+	standardChangeTypeNames := make([]string, len(standardChangeTypes))
+
+	i := 0
+	for changeType := range standardChangeTypes {
+		standardChangeTypeNames[i] = changeType
+		i++
+	}
+
 	previousVersion := ""
 
 	for _, version := range c.Versions {
@@ -62,7 +70,7 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 		if !opts.AllowInvalidChangeType {
 			for _, changeType := range version.Entries.Keys() {
 				if _, exists := standardChangeTypes[changeType]; !exists {
-					err.pushIssue(version.Version, changeType, "invalid change type in changelog entry")
+					err.pushIssue(version.Version, changeType, fmt.Sprintf("invalid section `%s` in changelog entry (available values: %v)", changeType, standardChangeTypeNames))
 				}
 			}
 		}
