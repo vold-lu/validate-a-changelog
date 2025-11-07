@@ -43,8 +43,11 @@ func (sm *SortedMap[K, V]) Set(key K, val V) error {
 	sm.mutex.Lock()
 	defer sm.mutex.Unlock()
 
+	if _, ok := sm.values[key]; !ok {
+		sm.keys = append(sm.keys, key)
+	}
+
 	sm.values[key] = val
-	sm.keys = append(sm.keys, key)
 
 	return nil
 }

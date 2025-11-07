@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- SortedMap#Set: handle key already present.
+
 ## [0.5.1] - 2025-10-29
 
 ### New
