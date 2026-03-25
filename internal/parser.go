@@ -7,7 +7,7 @@ import (
 
 var (
 	titleRegex             = regexp.MustCompile(`^# (.*)$`)
-	versionRegex           = regexp.MustCompile(`^## \[([0-9.]+)\] ?-? ?([0-9]{4}-[0-9]{2}-[0-9]{2})?$`)
+	versionRegex           = regexp.MustCompile(`^## \[([0-9.a-zA-Z-]+)\] ?-? ?([0-9]{4}-[0-9]{2}-[0-9]{2})?$`)
 	unreleasedVersionRegex = regexp.MustCompile(`^## \[Unreleased\]$`)
 	sectionRegex           = regexp.MustCompile(`^### (.*)$`)
 	entryRegex             = regexp.MustCompile(`^[ \t]*- (.*)$`)

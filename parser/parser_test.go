@@ -118,3 +118,35 @@ func TestParseInvalidChangelogMissingSection(t *testing.T) {
 		t.Fatal()
 	}
 }
+
+func TestParseValidChangelogVersionWithSuffix(t *testing.T) {
+	r := strings.NewReader("# Changelog\n\n## [1.0.0-vold1]\n\n### Added\n\n- v1.1 Brazilian Portuguese translation.\n\n")
+	c, err := Parse(r)
+	if err != nil || c == nil {
+		t.Fatal()
+	}
+
+	// Validate the title
+	if c.Title != "Changelog" {
+		t.Logf("Expected title to be \"Changelog\", got \"%v\"", c.Title)
+		t.Fail()
+	}
+
+	// Validate the number of versions
+	if len(c.Versions) != 1 {
+		t.Logf("Expected 15 versions. Got: %d", len(c.Versions))
+		t.Fatal()
+	}
+
+	// Make sure the version numbering
+	if c.Versions[0].Version != "1.0.0-vold1" {
+		t.Logf("Expected Unreleased version in c.Versions[0]. Got: %s", c.Versions[0].Version)
+		t.Fail()
+	}
+
+	// Validate version details
+	if v, _ := c.Versions[0].Entries.Get("Added"); len(v) != 1 {
+		t.Logf("Expected 6 added entries in c.Versions[0]. Got: %d", len(v))
+		t.Fail()
+	}
+}
