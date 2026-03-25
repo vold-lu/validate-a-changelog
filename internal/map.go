@@ -118,7 +118,7 @@ func (sm *SortedMap[K, V]) MarshalJSON() ([]byte, error) {
 		}
 
 		// Serialize the key
-		bb.WriteString(fmt.Sprintf("\"%v\"", key))
+		_, _ = fmt.Fprintf(&bb, "\"%v\"", val)
 
 		bb.WriteRune(':')
 
