@@ -86,6 +86,14 @@ func TestIsVersionLine(t *testing.T) {
 			IsValid: true,
 		},
 		{
+			Line:    "## [1.2.0-vold1]",
+			IsValid: true,
+		},
+		{
+			Line:    "## [1.2.0+5d42a37-vold1]",
+			IsValid: true,
+		},
+		{
 			Line:    "## 0.1.0",
 			IsValid: false,
 		},
@@ -135,6 +143,22 @@ func TestParseVersionLine(t *testing.T) {
 			Line:    "## [0.1.0]",
 			IsValid: true,
 			Version: "0.1.0",
+		},
+		{
+			Line:    "## [1.2.0-vold1]",
+			IsValid: true,
+			Version: "1.2.0-vold1",
+		},
+		{
+			Line:    "## [1.2.0+5d42a37-vold1]",
+			IsValid: true,
+			Version: "1.2.0+5d42a37-vold1",
+		},
+		{
+			Line:        "## [1.2.0+5d42a37-vold1] - 2025-10-28",
+			IsValid:     true,
+			Version:     "1.2.0+5d42a37-vold1",
+			ReleaseDate: &date,
 		},
 		{
 			Line:    "## 0.1.0",
