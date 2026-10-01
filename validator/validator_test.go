@@ -338,6 +338,58 @@ func TestValidateChangelogGoodVersionOrderWithUnreleased(t *testing.T) {
 	}
 }
 
+func TestValidateChangelogGoodVersionOrderWithBuildMetadata(t *testing.T) {
+	c := &validateachangelog.Changelog{
+		Versions: []*validateachangelog.Version{
+			{
+				Version:     "1.2.0+5d42a37-vold1",
+				ReleaseDate: nil,
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
+			},
+			{
+				Version:     "1.2.0-vold1",
+				ReleaseDate: nil,
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
+			},
+		},
+	}
+
+	if err := Validate(c, &Options{
+		AllowMissingReleaseDate:     true,
+		AllowEmptyVersion:           true,
+		AllowInvalidChangeType:      true,
+		AllowInvalidChangeTypeOrder: true,
+	}); err != nil {
+		t.Fail()
+	}
+}
+
+func TestValidateChangelogBadVersionOrderWithBuildMetadata(t *testing.T) {
+	c := &validateachangelog.Changelog{
+		Versions: []*validateachangelog.Version{
+			{
+				Version:     "1.2.0-vold1",
+				ReleaseDate: nil,
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
+			},
+			{
+				Version:     "1.2.0+5d42a37-vold1",
+				ReleaseDate: nil,
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
+			},
+		},
+	}
+
+	if err := Validate(c, &Options{
+		AllowMissingReleaseDate:     true,
+		AllowEmptyVersion:           true,
+		AllowInvalidChangeType:      true,
+		AllowInvalidChangeTypeOrder: true,
+	}); err == nil {
+		t.Fail()
+	}
+}
+
 func TestValidateChangelogBadVersionOrder(t *testing.T) {
 	c := &validateachangelog.Changelog{
 		Versions: []*validateachangelog.Version{
