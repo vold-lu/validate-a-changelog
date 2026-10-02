@@ -364,6 +364,58 @@ func TestValidateChangelogGoodVersionOrderWithBuildMetadata(t *testing.T) {
 	}
 }
 
+func TestValidateChangelogGoodVersionOrderWithSameBuildMetadataPrefix(t *testing.T) {
+	c := &validateachangelog.Changelog{
+		Versions: []*validateachangelog.Version{
+			{
+				Version:     "1.2.0+5d42a37-vold2",
+				ReleaseDate: nil,
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
+			},
+			{
+				Version:     "1.2.0+5d42a37-vold1",
+				ReleaseDate: nil,
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
+			},
+		},
+	}
+
+	if err := Validate(c, &Options{
+		AllowMissingReleaseDate:     true,
+		AllowEmptyVersion:           true,
+		AllowInvalidChangeType:      true,
+		AllowInvalidChangeTypeOrder: true,
+	}); err != nil {
+		t.Fail()
+	}
+}
+
+func TestValidateChangelogBadVersionOrderWithSameBuildMetadataPrefix(t *testing.T) {
+	c := &validateachangelog.Changelog{
+		Versions: []*validateachangelog.Version{
+			{
+				Version:     "1.2.0+5d42a37-vold1",
+				ReleaseDate: nil,
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
+			},
+			{
+				Version:     "1.2.0+5d42a37-vold2",
+				ReleaseDate: nil,
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
+			},
+		},
+	}
+
+	if err := Validate(c, &Options{
+		AllowMissingReleaseDate:     true,
+		AllowEmptyVersion:           true,
+		AllowInvalidChangeType:      true,
+		AllowInvalidChangeTypeOrder: true,
+	}); err == nil {
+		t.Fail()
+	}
+}
+
 func TestValidateChangelogBadVersionOrderWithBuildMetadata(t *testing.T) {
 	c := &validateachangelog.Changelog{
 		Versions: []*validateachangelog.Version{
@@ -591,5 +643,28 @@ func TestValidateChangelogValidChangeTypeOrderAndNotAllowedWithCustomChangeType(
 		AllowInvalidChangeTypeOrder: false,
 	}); err != nil {
 		t.Fail()
+	}
+}
+
+func TestCompareVersions(t *testing.T) {
+	tests := []struct {
+		A     string
+		B     string
+		Order int
+	}{
+		{A: "1.2.0+5d42a37-vold2", B: "1.2.0+5d42a37-vold1", Order: 1},
+		{A: "1.2.0+5d42a37-vold1", B: "1.2.0+5d42a37-vold2", Order: -1},
+		{A: "1.2.0+5d42a37-vold1", B: "1.2.0+5d42a37-vold1", Order: 0},
+		{A: "1.2.0+5d42a37-vold10", B: "1.2.0+5d42a37-vold2", Order: 1},
+		{A: "1.2.0+5d42a37-vold1", B: "1.2.0", Order: 1},
+		{A: "1.2.0+5d42a37-vold1", B: "1.2.0-vold1", Order: 1},
+		{A: "1.2.0+5d42a37-vold1", B: "1.2.1+5d42a37-vold2", Order: -1},
+		{A: "1.3.0", B: "1.2.0+5d42a37-vold2", Order: 1},
+	}
+
+	for _, test := range tests {
+		if order := compareVersions(test.A, test.B); order != test.Order {
+			t.Errorf("compareVersions(%s, %s) = %d, want %d", test.A, test.B, order, test.Order)
+		}
 	}
 }

@@ -1,8 +1,11 @@
 package validator
 
 import (
+	"cmp"
 	"fmt"
 	"regexp"
+	"strconv"
+	"strings"
 
 	"github.com/vold-lu/validate-a-changelog"
 	"github.com/vold-lu/validate-a-changelog/internal"
@@ -11,7 +14,10 @@ import (
 
 const unreleasedVersion = "Unreleased"
 
-var semverRegex = regexp.MustCompile(`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
+var (
+	buildChunkRegex = regexp.MustCompile(`\d+|\D+`)
+	semverRegex     = regexp.MustCompile(`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
+)
 
 type Options struct {
 	AllowEmptyVersion           bool
@@ -86,7 +92,7 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 				currentVersion = "99.99.99"
 			}
 
-			if semver.Compare("v"+previousVersion, "v"+currentVersion) < 1 {
+			if compareVersions(previousVersion, currentVersion) < 1 {
 				err.pushIssue(version.Version, "", "version is not in the right order")
 			}
 		}
@@ -129,4 +135,42 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 	} else {
 		return nil
 	}
+}
+
+// compareVersions compares two versions like semver.Compare does, except that
+// it falls back to the build metadata when both versions have the same semver
+// precedence: semver ignores the build metadata, but we rely on it to carry our
+// own release counter (1.2.0+5d42a37-vold2 comes after 1.2.0+5d42a37-vold1).
+func compareVersions(a, b string) int {
+	if c := semver.Compare("v"+a, "v"+b); c != 0 {
+		return c
+	}
+
+	return compareBuild(semver.Build("v"+a), semver.Build("v"+b))
+}
+
+// compareBuild compares two build metadata, digit runs being compared as
+// numbers so that `vold10` comes after `vold2`.
+func compareBuild(a, b string) int {
+	aChunks := buildChunkRegex.FindAllString(a, -1)
+	bChunks := buildChunkRegex.FindAllString(b, -1)
+
+	for i := 0; i < len(aChunks) && i < len(bChunks); i++ {
+		aNumber, aErr := strconv.Atoi(aChunks[i])
+		bNumber, bErr := strconv.Atoi(bChunks[i])
+
+		if aErr == nil && bErr == nil {
+			if aNumber != bNumber {
+				return cmp.Compare(aNumber, bNumber)
+			}
+
+			continue
+		}
+
+		if aChunks[i] != bChunks[i] {
+			return strings.Compare(aChunks[i], bChunks[i])
+		}
+	}
+
+	return cmp.Compare(len(aChunks), len(bChunks))
 }
