@@ -31,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.1] - 2025-10-29
 
-### New
+### Added
 
 - cmd/lint-changelog: handle french date format.
 
