@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- JSON serialization of a version's entries wrote the value in place of the key, producing invalid JSON as soon as an entry contained a double quote.
+
 ## [0.8.0] - 2026-10-01
 
 ### Changed

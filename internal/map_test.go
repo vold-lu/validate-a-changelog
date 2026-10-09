@@ -1,6 +1,9 @@
 package internal
 
-import "testing"
+import (
+	"encoding/json"
+	"testing"
+)
 
 func TestNewEmptyMap(t *testing.T) {
 	m := NewEmptyMap[string, string]()
@@ -127,5 +130,47 @@ func TestSortedMap_Has(t *testing.T) {
 		if !m.Has(key) {
 			t.Fatal("NewSortedMap() returned wrong value")
 		}
+	}
+}
+
+func TestSortedMap_MarshalJSON(t *testing.T) {
+	cases := []struct {
+		Name     string
+		Map      interface{ MarshalJSON() ([]byte, error) }
+		Expected string
+	}{
+		{
+			Name:     "Empty",
+			Map:      NewEmptyMap[string, int](),
+			Expected: `{}`,
+		},
+		{
+			Name:     "KeepsInsertionOrder",
+			Map:      NewSortedMap([]string{"c", "a", "b"}, map[string]int{"a": 1, "b": 2, "c": 3}),
+			Expected: `{"c":3,"a":1,"b":2}`,
+		},
+		{
+			Name:     "EscapesKeyAndValue",
+			Map:      NewSortedMap([]string{`Les "Commande"`}, map[string]string{`Les "Commande"`: `et "Tiers"`}),
+			Expected: `{"Les \"Commande\"":"et \"Tiers\""}`,
+		},
+		{
+			Name:     "NonStringKey",
+			Map:      NewSortedMap([]int{2, 1}, map[int]string{1: "one", 2: "two"}),
+			Expected: `{"2":"two","1":"one"}`,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Name, func(t *testing.T) {
+			b, err := json.Marshal(c.Map)
+			if err != nil {
+				t.Fatalf("MarshalJSON() returned an error: %v", err)
+			}
+
+			if string(b) != c.Expected {
+				t.Fatalf("MarshalJSON(). Got %s, wanted %s", string(b), c.Expected)
+			}
+		})
 	}
 }
