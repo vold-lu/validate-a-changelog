@@ -117,8 +117,14 @@ func (sm *SortedMap[K, V]) MarshalJSON() ([]byte, error) {
 			return nil, fmt.Errorf("SortedMap: unable to find value in cache: %v", key)
 		}
 
-		// Serialize the key
-		_, _ = fmt.Fprintf(&bb, "\"%v\"", val)
+		// Serialize the key. It goes through json.Marshal as a string so that
+		// any special character it contains is properly escaped, and so that
+		// non-string keys still produce a valid JSON object key.
+		if b, err := json.Marshal(fmt.Sprintf("%v", key)); err != nil {
+			return nil, err
+		} else {
+			bb.Write(b)
+		}
 
 		bb.WriteRune(':')
 
