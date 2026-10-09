@@ -442,6 +442,58 @@ func TestValidateChangelogBadVersionOrderWithBuildMetadata(t *testing.T) {
 	}
 }
 
+func TestValidateChangelogGoodVersionOrderWithPrerelease(t *testing.T) {
+	c := &validateachangelog.Changelog{
+		Versions: []*validateachangelog.Version{
+			{
+				Version:     "2.11.2-vold10",
+				ReleaseDate: nil,
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
+			},
+			{
+				Version:     "2.11.2-vold9",
+				ReleaseDate: nil,
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
+			},
+		},
+	}
+
+	if err := Validate(c, &Options{
+		AllowMissingReleaseDate:     true,
+		AllowEmptyVersion:           true,
+		AllowInvalidChangeType:      true,
+		AllowInvalidChangeTypeOrder: true,
+	}); err != nil {
+		t.Fail()
+	}
+}
+
+func TestValidateChangelogBadVersionOrderWithPrerelease(t *testing.T) {
+	c := &validateachangelog.Changelog{
+		Versions: []*validateachangelog.Version{
+			{
+				Version:     "2.11.2-vold9",
+				ReleaseDate: nil,
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
+			},
+			{
+				Version:     "2.11.2-vold10",
+				ReleaseDate: nil,
+				Entries:     *internal.NewEmptyMap[string, []validateachangelog.Entry](),
+			},
+		},
+	}
+
+	if err := Validate(c, &Options{
+		AllowMissingReleaseDate:     true,
+		AllowEmptyVersion:           true,
+		AllowInvalidChangeType:      true,
+		AllowInvalidChangeTypeOrder: true,
+	}); err == nil {
+		t.Fail()
+	}
+}
+
 func TestValidateChangelogBadVersionOrder(t *testing.T) {
 	c := &validateachangelog.Changelog{
 		Versions: []*validateachangelog.Version{
@@ -660,6 +712,15 @@ func TestCompareVersions(t *testing.T) {
 		{A: "1.2.0+5d42a37-vold1", B: "1.2.0-vold1", Order: 1},
 		{A: "1.2.0+5d42a37-vold1", B: "1.2.1+5d42a37-vold2", Order: -1},
 		{A: "1.3.0", B: "1.2.0+5d42a37-vold2", Order: 1},
+		{A: "1.2.0-vold10", B: "1.2.0-vold9", Order: 1},
+		{A: "1.2.0-vold9", B: "1.2.0-vold10", Order: -1},
+		{A: "1.2.0-vold10", B: "1.2.0-vold10", Order: 0},
+		{A: "1.2.0-vold1", B: "1.2.0", Order: -1},
+		{A: "1.2.0", B: "1.2.0-vold1", Order: 1},
+		{A: "1.2.0-alpha", B: "1.2.0-alpha.1", Order: -1},
+		{A: "1.2.0-alpha.1", B: "1.2.0-alpha.beta", Order: -1},
+		{A: "1.2.0-rc.2", B: "1.2.0-rc.10", Order: -1},
+		{A: "1.2.0-vold10", B: "1.2.1-vold9", Order: -1},
 	}
 
 	for _, test := range tests {

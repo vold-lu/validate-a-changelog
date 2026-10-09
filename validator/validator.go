@@ -15,8 +15,8 @@ import (
 const unreleasedVersion = "Unreleased"
 
 var (
-	buildChunkRegex = regexp.MustCompile(`\d+|\D+`)
-	semverRegex     = regexp.MustCompile(`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
+	chunkRegex  = regexp.MustCompile(`\d+|\D+`)
+	semverRegex = regexp.MustCompile(`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
 )
 
 type Options struct {
@@ -138,22 +138,48 @@ func Validate(c *validateachangelog.Changelog, opts *Options) error {
 }
 
 // compareVersions compares two versions like semver.Compare does, except that
-// it falls back to the build metadata when both versions have the same semver
-// precedence: semver ignores the build metadata, but we rely on it to carry our
-// own release counter (1.2.0+5d42a37-vold2 comes after 1.2.0+5d42a37-vold1).
+// it compares the prerelease and the build metadata as natural strings (see
+// compareChunks) instead of following the semver rules: semver compares the
+// alphanumeric prerelease identifiers lexically and ignores the build metadata
+// altogether, but we rely on both to carry our own release counter
+// (1.2.0-vold10 comes after 1.2.0-vold9, same for 1.2.0+5d42a37-vold10).
 func compareVersions(a, b string) int {
-	if c := semver.Compare("v"+a, "v"+b); c != 0 {
+	va, vb := "v"+a, "v"+b
+
+	// Compare the release part (major.minor.patch) using the semver rules.
+	if c := semver.Compare(releasePart(va), releasePart(vb)); c != 0 {
 		return c
 	}
 
-	return compareBuild(semver.Build("v"+a), semver.Build("v"+b))
+	aPrerelease, bPrerelease := semver.Prerelease(va), semver.Prerelease(vb)
+
+	// A version with a prerelease has a lower precedence than the release one.
+	if (aPrerelease == "") != (bPrerelease == "") {
+		if aPrerelease == "" {
+			return 1
+		}
+
+		return -1
+	}
+
+	if c := compareChunks(aPrerelease, bPrerelease); c != 0 {
+		return c
+	}
+
+	return compareChunks(semver.Build(va), semver.Build(vb))
 }
 
-// compareBuild compares two build metadata, digit runs being compared as
-// numbers so that `vold10` comes after `vold2`.
-func compareBuild(a, b string) int {
-	aChunks := buildChunkRegex.FindAllString(a, -1)
-	bChunks := buildChunkRegex.FindAllString(b, -1)
+// releasePart returns the version stripped from its prerelease & build
+// metadata, i.e. only its major.minor.patch part.
+func releasePart(v string) string {
+	return strings.TrimSuffix(semver.Canonical(v), semver.Prerelease(v))
+}
+
+// compareChunks compares two version chunks (prerelease or build metadata),
+// digit runs being compared as numbers so that `vold10` comes after `vold2`.
+func compareChunks(a, b string) int {
+	aChunks := chunkRegex.FindAllString(a, -1)
+	bChunks := chunkRegex.FindAllString(b, -1)
 
 	for i := 0; i < len(aChunks) && i < len(bChunks); i++ {
 		aNumber, aErr := strconv.Atoi(aChunks[i])

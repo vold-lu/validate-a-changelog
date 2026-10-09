@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Versions whose prerelease carries a release counter were ordered lexically (`1.2.0-vold10` was considered lower than `1.2.0-vold9`), as already fixed in 0.8.0 for the build metadata.
+
 ## [0.8.1] - 2026-10-09
 
 ### Fixed
